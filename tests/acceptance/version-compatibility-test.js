@@ -5,7 +5,6 @@ import moment from 'moment';
 moduleForAcceptance('Acceptance | version compatibility');
 
 test('displays Ember version compatibility when an addon has it', function(assert) {
-  server.logging = true;
   let { addon } = createAddonWithVersionCompatibilities([failedVersion('1.13.13'), '2.0.0']);
 
   visitAddon(addon);
@@ -72,7 +71,7 @@ test('displays semver string with compatibility when all tests passed', function
 
 test('displays date/time when tests were last run', function(assert) {
   let { addon, testResult } = createAddonWithVersionCompatibilities(['2.1.0', '2.2.0', '2.3.0', '2.4.0']);
-  server.db.testResults.update(testResult.id, { testsRunAt: moment.utc().subtract(1, 'day') });
+  server.db.testResults.update(testResult.id, { createdAt: moment.utc().subtract(1, 'day') });
 
   visitAddon(addon);
   andThen(function() {
@@ -81,7 +80,6 @@ test('displays date/time when tests were last run', function(assert) {
 });
 
 test('displays tests results from the latest version with them, if the newest version has none', function(assert) {
-  server.logging = true;
   let { addon } = createAddonWithVersionCompatibilities(['2.1.0', '2.2.0', '2.3.0', '2.4.0']);
   server.create('version', { addonId: addon.id });
 
@@ -118,6 +116,9 @@ test('preface text for timestamp depends on status of tests', function(assert) {
 
   visitAddon(addonWithTestFailure);
   andThen(() => assert.contains('.test-ember-version-compatibility-timestamp', 'last tried'));
+
+  visitAddon(addonWithSomePassing);
+  andThen(() => assert.contains('.test-ember-version-compatibility-timestamp', 'last ran'));
 });
 
 test('sets correct CSS class based on result', function(assert) {
@@ -135,16 +136,16 @@ test('uses the latest build for version compatibility', function(assert) {
   let addon = server.create('addon');
   let version = server.create('version', { addonId: addon.id });
   let middleTestResult = server.create('testResult', {
-    testsRunAt: moment().subtract(1, 'hour').utc()
+    createdAt: moment().subtract(1, 'hour').utc()
   });
   let latestTestResult = server.create('testResult', {
     succeeded: false,
-    testsRunAt: moment().subtract(30, 'minutes').utc(),
+    createdAt: moment().subtract(30, 'minutes').utc(),
     versionId: version.id
   });
   let earliestTestResult = server.create('testResult', {
     succeeded: true,
-    testsRunAt: moment().subtract(2, 'hours').utc(),
+    createdAt: moment().subtract(2, 'hours').utc(),
     versionId: version.id
   });
   server.db.versions.update(version, { testResultIds: [middleTestResult.id, latestTestResult.id, earliestTestResult.id] });
@@ -161,18 +162,18 @@ test('excludes canary-only builds for version compatiblity purposes', function(a
   let testResults = server.createList('testResult', 5, {
     canary: true,
     succeeded: true,
-    testsRunAt: (i) => moment().subtract(i + 1, 'hours').utc(),
+    createdAt: (i) => moment().subtract(i + 1, 'hours').utc(),
     versonId: version.id
   });
   testResults.push(server.create('testResult', {
     succeeded: false,
-    testsRunAt: moment().subtract(6, 'hours').utc(),
+    createdAt: moment().subtract(6, 'hours').utc(),
     versionId: version.id
   }));
   testResults.concat(server.createList('testResult', 5, {
     canary: true,
     succeeded: true,
-    testsRunAt: (i) => moment().subtract(7 + i, 'hours').utc(),
+    createdAt: (i) => moment().subtract(7 + i, 'hours').utc(),
     versionId: version.id
   }));
 

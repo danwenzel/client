@@ -4,7 +4,6 @@ import moduleForAcceptance from 'ember-addon-review/tests/helpers/module-for-acc
 moduleForAcceptance('Acceptance: Index');
 
 test('visiting /', function(assert) {
-  server.logging=true;
   server.createList('category', 7);
   let addons = server.createList('addon', 4);
   let category = server.create('category',

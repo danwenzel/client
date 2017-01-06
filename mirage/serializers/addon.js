@@ -15,7 +15,7 @@ export default ApplicationSerializer.extend({
         links: {
           related: `/api/v2/addons/${object.id}/github-users`
         }
-      }
+      };
     });
 
     return json;
