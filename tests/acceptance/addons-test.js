@@ -108,7 +108,7 @@ test('displays github data', function(assert) {
     githubUsers: users
   });
 
-  let stats = server.create('github-stats', {
+  server.create('github-stats', {
     openIssues: 13,
     forks: 94,
     stars: 37,

@@ -1,7 +1,7 @@
 import ApplicationSerializer from './application';
 
 export default ApplicationSerializer.extend({
-  serialize(response, request) {
+  serialize() {
     let json = ApplicationSerializer.prototype.serialize.apply(this, arguments);
 
     json.data.forEach((object) => {
