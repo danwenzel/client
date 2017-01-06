@@ -78,7 +78,17 @@ export default function() {
       }
     }
 
+    // add in-category filter
+
     return schema.addons.all();
+  });
+
+  this.get('/addons/:id/github-stats', function(schema, request) {
+    return schema.githubStats.where({ addonId: request.params.id});
+  });
+
+  this.get('/addons/:id/github-users', function(schema, request) {
+    return schema.addons.find(request.params.id).githubUsers;
   });
 
   this.get('/maintainers', function(schema, request) {
