@@ -70,6 +70,10 @@ Router.map(function() {
     this.route('build-results', function() {
       this.route('show', { path: '/:id' });
     });
+
+    this.route('addon-lists', function() {
+      this.route('addons-needing-categorization');
+    });
   });
 
   this.route('about');
